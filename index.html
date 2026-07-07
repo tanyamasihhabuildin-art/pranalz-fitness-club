@@ -98,12 +98,16 @@
     font-size:11.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
     padding:6px 14px;border-radius:20px;margin-bottom:18px;
   }
-  .hero .logo{font-size:14px;letter-spacing:3px;color:var(--red);font-weight:700;margin-bottom:8px;}
-  .hero h1{
-    font-size:42px;margin:0 0 10px;line-height:1.08;
-    background:linear-gradient(180deg, var(--chalk) 0%, #C7C2B5 100%);
-    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  .gym-name{
+    font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
+    font-size:clamp(34px,7.5vw,58px);line-height:1.02;letter-spacing:1px;
+    margin-bottom:14px;color:var(--chalk);
   }
+  .gym-name .hl{
+    color:var(--red);
+    text-shadow:0 0 26px rgba(255,75,54,0.45);
+  }
+  .hero h1{font-size:22px;letter-spacing:0.5px;color:var(--chalk-dim);font-weight:600;text-transform:none;font-family:'Work Sans',sans-serif;margin:0 0 10px;background:none;-webkit-text-fill-color:var(--chalk-dim);}
   .hero p{color:var(--chalk-dim);margin:0 auto;font-size:15.5px;max-width:480px;line-height:1.5;}
   .feature-strip{
     display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:26px;
@@ -114,7 +118,7 @@
   }
   .feature-pill .em{font-size:14px;}
   .doors{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;}
-  @media (max-width:640px){.doors{grid-template-columns:1fr;}.hero h1{font-size:32px;}}
+  @media (max-width:640px){.doors{grid-template-columns:1fr;}}
   .door{
     position:relative;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;
     padding:30px 22px;text-align:center;cursor:pointer;transition:.18s;overflow:hidden;
@@ -417,8 +421,8 @@ function renderLanding(){
   document.getElementById('app').innerHTML = `
     <div class="hero">
       <div class="hero-inner">
-        <div class="eyebrow">🏋️ Pranalz Fitness Club</div>
-        <h1>Your Plan.<br>Your Progress.</h1>
+        <div class="gym-name">PRANALZ <span class="hl">FITNESS CLUB</span></div>
+        <h1>Your Plan. Your Progress.</h1>
         <p>Personalized diet and home workout plans, private progress tracking, and follow-along videos — all in one place.</p>
         <div class="feature-strip">
           <div class="feature-pill"><span class="em">🎥</span> Home Workout Videos</div>
@@ -431,13 +435,11 @@ function renderLanding(){
       <div class="door" onclick="go('owner-gate')">
         <div class="icon-badge">🔑</div>
         <h3>Owner Dashboard</h3>
-        <p>Create and manage member plans, track everyone's progress, and issue private access codes.</p>
         <button class="btn btn-primary btn-full">Enter Owner Dashboard</button>
       </div>
       <div class="door" onclick="go('client-gate')">
         <div class="icon-badge">💪</div>
         <h3>Member Access</h3>
-        <p>Enter your personal access code to view your diet plan, workout schedule, and home workout videos.</p>
         <button class="btn btn-outline btn-full">View My Plan</button>
         <div class="privacy-note"><span class="lock">🔒</span><span>Your plan is private. Only your unique code unlocks your own data — no other member can ever see it.</span></div>
       </div>
