@@ -343,6 +343,67 @@ function exerciseSearchTerm(line){
   if(!t || t.length<3) return null;
   return t;
 }
+/* ---------------- One curated video per exercise ----------------
+   Trainer ne kaha: "Watch" button dabane par YouTube ka poora search-results
+   page (jisme bahut sare videos aate hain) nahi khulna chahiye — sirf USI
+   exercise ka EK hi (single) video khulna chahiye, jaise "Bodyweight Squats"
+   ke liye sirf squats wala ek video, "Wall Push-ups" ke liye sirf ek video.
+
+   Isliye hum har common home-workout exercise ke liye ek verified, single
+   YouTube video-ID hardcode kar rahe hain (reputed sources jaise NASM,
+   Fit Father Project, etc.). Match keyword-based hota hai (case-insensitive,
+   substring), sabse specific keyword pehle check hota hai taaki "Wall
+   Push-ups" "Push-ups" se pehle match ho jaaye, na ki generic wale se.
+   Agar koi bilkul naya/custom exercise naam ho jo list mein nahi hai, tabhi
+   hum purane fallback (YouTube search) par jaate hain — warna hamesha wahi
+   ek matched video khulega. */
+const EXERCISE_VIDEO_MAP = [
+  ['jump squat', 'tZjZxrAeVjg'],
+  ['jumping jack (low impact)', 'Bqy1xIXX2nc'],
+  ['jumping jacks (low impact)', 'Bqy1xIXX2nc'],
+  ['low impact jumping jack', 'Bqy1xIXX2nc'],
+  ['jumping jack', 'F_rq04M0x5M'],
+  ['wall push-up', 'dhjjqFfUVlg'],
+  ['wall push up', 'dhjjqFfUVlg'],
+  ['incline push-up', '0JUrOH--Kdk'],
+  ['incline push up', '0JUrOH--Kdk'],
+  ['modified push-up', 'PDr5B2jLUOw'],
+  ['modified push up', 'PDr5B2jLUOw'],
+  ['knee push-up', 'PDr5B2jLUOw'],
+  ['knee push up', 'PDr5B2jLUOw'],
+  ['push-up', 'WDIpL0pjun0'],
+  ['push up', 'WDIpL0pjun0'],
+  ['bodyweight squat', 'DlS-GAF8Edg'],
+  ['squat', 'DlS-GAF8Edg'],
+  ['glute bridge', 'SKOMwg1JLrU'],
+  ['step-up', 'WCFCdxzFBa4'],
+  ['step up', 'WCFCdxzFBa4'],
+  ['standing knee raise', 'O_8EUJ7i-PI'],
+  ['knee raise', 'O_8EUJ7i-PI'],
+  ['plank', 'mwlp75MS6Rg'],
+  ['reverse lunge', 'xrPteyQLGAo'],
+  ['walking lunge', '-_270H-3Wrc'],
+  ['alternating lunge', '-_270H-3Wrc'],
+  ['lunge', '-_270H-3Wrc'],
+  ['mountain climber', 'ELCyvGG8RHA'],
+  ['bicycle crunch', 'PAEo-zRSanM'],
+  ['russian twist', 'DF0sPfwys_g'],
+  ['leg raise', 'S_AK2Qv8_q8'],
+  ['march in place', 'QilgMPG7OaA'],
+  ['marching in place', 'QilgMPG7OaA']
+];
+/* Return {id, url} for the ONE matching video, or null if this exercise
+   isn't in our curated list (rare — only for a trainer's custom/unusual
+   exercise name). Longest/most-specific keywords are listed first above so
+   "Wall Push-ups" matches before the generic "Push-up" entry. */
+function findExerciseVideo(term){
+  if(!term) return null;
+  const t = term.toLowerCase();
+  for(const [key, id] of EXERCISE_VIDEO_MAP){
+    if(t.includes(key)) return {id, url:'https://www.youtube.com/watch?v='+id};
+  }
+  return null;
+}
 /* Extract a plain YouTube video ID from a watch/share/shorts URL, if
    possible. We deliberately do NOT embed videos in an <iframe> — embedded
    players can get blocked depending on where this page is hosted/viewed.
@@ -709,8 +770,16 @@ async function renderPlanView(id, asOwner){
   const phasesHtml = data.phases.map((p,i)=>{
     const exHtml = p.exercises.map(e=>{
       const term = exerciseSearchTerm(e);
-      const watchBtn = term
-        ? `<a class="ex-watch" href="${esc('https://www.youtube.com/results?search_query=' + encodeURIComponent(term + ' exercise how to do at home'))}" target="_blank" rel="noopener" title="Watch exactly how to do: ${esc(term)}">▶ Watch</a>`
+      const matched = term ? findExerciseVideo(term) : null;
+      // Agar exercise humari curated list mein hai, to seedha USI ek video
+      // par le jao (search results page nahi khulta). Sirf kabhi-kabhar
+      // kisi bilkul naye/custom exercise naam ke liye purana search-fallback
+      // use hota hai.
+      const watchHref = matched
+        ? matched.url
+        : (term ? ('https://www.youtube.com/results?search_query=' + encodeURIComponent(term + ' exercise how to do at home')) : null);
+      const watchBtn = watchHref
+        ? `<a class="ex-watch" href="${esc(watchHref)}" target="_blank" rel="noopener" title="Watch exactly how to do: ${esc(term)}">▶ Watch</a>`
         : '';
       return `<li><span class="ex-text">${esc(e)}</span>${watchBtn}</li>`;
     }).join('');
