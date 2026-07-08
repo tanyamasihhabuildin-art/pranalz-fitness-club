@@ -327,7 +327,27 @@ function esc(str){
   const d=document.createElement('div'); d.innerText = str==null?'':str; return d.innerHTML;
 }
 function linesToArr(text){
-  return (text||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  // Kabhi-kabhar trainer kahin se text copy-paste karta hai (WhatsApp/Word
+  // se) jisme normal Enter ki jagah literal "<br>" tags hote hain. Agar
+  // sirf "\n" par split karte to woh poora text EK hi line/item ban jata
+  // aur "<br>" baar-baar literal text ki tarah dikhta. Isliye ab hum "\n"
+  // ke saath-saath literal <br>, <br/>, <br /> (case-insensitive) par bhi
+  // split karte hain — taaki har instruction apni alag line mein aaye.
+  return (text||'')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .split('\n')
+    .map(s=>s.trim())
+    .filter(Boolean);
+}
+/* Purane/already-saved data mein agar kisi item ke andar literal <br> tags
+   reh gaye hain (naya save hone se pehle ke), to display ke waqt bhi unhe
+   alag-alag lines mein tod do — taaki purane clients ke plans bhi bina
+   dobara edit kiye turant sahi (ek-ek line mein) dikhein, "<br>" text ki
+   tarah baar-baar na dikhe. */
+function expandBrLines(arr){
+  return (arr||[]).flatMap(item =>
+    String(item||'').split(/<br\s*\/?>/gi).map(s=>s.trim()).filter(Boolean)
+  );
 }
 /* Turn one exercise line (e.g. "Bodyweight Squats – 3 × 12") into a clean
    search term (e.g. "Bodyweight Squats") so the video shown for it matches
@@ -665,7 +685,7 @@ async function renderOwnerForm(id){
     <div class="section-title"><div class="num">2</div><h2>General Rules</h2></div>
     <div class="card">
       <label>Write each rule on a new line</label>
-      <textarea id="f_rules" rows="6">${esc(data.generalRules.join('\n'))}</textarea>
+      <textarea id="f_rules" rows="6">${esc(expandBrLines(data.generalRules).join('\n'))}</textarea>
     </div>
 
     <div class="section-title"><div class="num">3</div><h2>Workout Phases (4 Rounds) + Home Workout Videos</h2></div>
@@ -676,13 +696,13 @@ async function renderOwnerForm(id){
       <label>Rest Days (comma-separated, e.g. 7,14,21,28,35)</label>
       <input id="f_restdays" value="${esc(data.restDays)}">
       <label>What to do on Rest Days</label>
-      <textarea id="f_restact" rows="3">${esc(data.restActivities.join('\n'))}</textarea>
+      <textarea id="f_restact" rows="3">${esc(expandBrLines(data.restActivities).join('\n'))}</textarea>
     </div>
 
     <div class="section-title"><div class="num">5</div><h2>Expected Results</h2></div>
     <div class="card">
       <label>Write each result on a new line</label>
-      <textarea id="f_results" rows="4">${esc(data.expectedResults.join('\n'))}</textarea>
+      <textarea id="f_results" rows="4">${esc(expandBrLines(data.expectedResults).join('\n'))}</textarea>
     </div>
 
     <div style="margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;">
@@ -763,9 +783,9 @@ async function renderPlanView(id, asOwner){
   const prog = (await sGet('progress:'+id, true)) || {doneDays:[]};
   const restDaysArr = (data.restDays||'').split(',').map(s=>parseInt(s.trim())).filter(Boolean);
 
-  const rulesHtml = data.generalRules.map(r=>`<li>${esc(r)}</li>`).join('');
-  const resultsHtml = data.expectedResults.map(r=>`<li>${esc(r)}</li>`).join('');
-  const restActHtml = data.restActivities.map(r=>`<li>${esc(r)}</li>`).join('');
+  const rulesHtml = expandBrLines(data.generalRules).map(r=>`<li>${esc(r)}</li>`).join('');
+  const resultsHtml = expandBrLines(data.expectedResults).map(r=>`<li>${esc(r)}</li>`).join('');
+  const restActHtml = expandBrLines(data.restActivities).map(r=>`<li>${esc(r)}</li>`).join('');
 
   const phasesHtml = data.phases.map((p,i)=>{
     const exHtml = p.exercises.map(e=>{
