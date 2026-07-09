@@ -6,7 +6,7 @@
 <title>Pranalz Fitness Club</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<!-- Firebase Compat SDKs (Optimized for Vercel/Production) -->
+<!-- Firebase Compat SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
@@ -84,6 +84,47 @@
     border-radius:14px;
     padding:20px;
   }
+
+  /* Glassmorphism Results Card */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+  }
+  .result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 75, 54, 0.05);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 75, 54, 0.1);
+  }
+  .result-item .dot {
+    color: var(--gold);
+    font-size: 18px;
+  }
+  .disclaimer {
+    margin-top: 25px;
+    font-size: 11px;
+    color: var(--chalk-dim);
+    line-height: 1.5;
+    padding-top: 15px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+
   .hero{
     position:relative;text-align:center;padding:56px 20px 40px;border-radius:22px;margin-bottom:26px;
     background:radial-gradient(ellipse at top, #1B1D22 0%, #0F1013 72%);
@@ -96,11 +137,6 @@
     pointer-events:none;
   }
   .hero-inner{position:relative;z-index:1;}
-  .eyebrow{
-    display:inline-flex;align-items:center;gap:6px;background:var(--red-dim);color:var(--red);
-    font-size:11.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
-    padding:6px 14px;border-radius:20px;margin-bottom:18px;
-  }
   .gym-name{
     font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
     font-size:clamp(34px,7.5vw,58px);line-height:1.02;letter-spacing:1px;
@@ -111,172 +147,74 @@
     text-shadow:0 0 26px rgba(255,75,54,0.45);
   }
   .hero h1{font-size:22px;letter-spacing:0.5px;color:var(--chalk-dim);font-weight:600;text-transform:none;font-family:'Work Sans',sans-serif;margin:0 0 10px;background:none;-webkit-text-fill-color:var(--chalk-dim);}
-  .hero p{color:var(--chalk-dim);margin:0 auto;font-size:15.5px;max-width:480px;line-height:1.5;}
-  .feature-strip{
-    display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:26px;
-  }
-  .feature-pill{
-    display:flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--line);
-    padding:8px 14px;border-radius:20px;font-size:12.5px;color:var(--chalk-dim);font-weight:600;
-  }
-  .feature-pill .em{font-size:14px;}
+  .feature-strip{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:26px;}
+  .feature-pill{display:flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--line);padding:8px 14px;border-radius:20px;font-size:12.5px;color:var(--chalk-dim);font-weight:600;}
   .doors{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;}
   @media (max-width:640px){.doors{grid-template-columns:1fr;}}
-  .door{
-    position:relative;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;
-    padding:30px 22px;text-align:center;cursor:pointer;transition:.18s;overflow:hidden;
-  }
-  .door:before{
-    content:'';position:absolute;inset:0;opacity:0;transition:.18s;
-    background:linear-gradient(160deg, rgba(255,75,54,0.09), transparent 60%);
-  }
-  .door:hover{border-color:var(--red);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.35);}
-  .door:hover:before{opacity:1;}
-  .door .icon-badge{
-    width:64px;height:64px;border-radius:16px;background:var(--surface-2);border:1px solid var(--line);
-    display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 14px;
-  }
-  .door h3{font-size:20px;margin:0 0 8px;}
-  .door p{color:var(--chalk-dim);font-size:13.5px;margin:0 0 18px;line-height:1.5;}
-  .privacy-note{
-    display:flex;align-items:flex-start;gap:8px;background:var(--surface-2);
-    border:1px solid var(--line);border-radius:10px;padding:10px 12px;
-    font-size:12px;color:var(--chalk-dim);text-align:left;margin-top:14px;
-  }
-  .privacy-note .lock{font-size:15px;flex-shrink:0;}
+  .door{position:relative;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:30px 22px;text-align:center;cursor:pointer;transition:.18s;overflow:hidden;}
+  .door:hover{border-color:var(--red);transform:translateY(-3px);}
+  .door .icon-badge{width:64px;height:64px;border-radius:16px;background:var(--surface-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 14px;}
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
   .topbar .brand{font-size:15px;letter-spacing:1px;color:var(--red);font-weight:700;}
   .back{color:var(--chalk-dim);cursor:pointer;font-size:14px;font-weight:600;}
-  .back:hover{color:var(--chalk);}
   .grid-clients{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
   .client-card{position:relative;overflow:hidden;}
-  .client-card .tag{
-    display:inline-block;background:var(--red-dim);color:var(--red);
-    font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:10px;
-    text-transform:uppercase;letter-spacing:.5px;
-  }
-  .client-card h3{font-size:20px;margin:0 0 4px;}
-  .client-card .meta{color:var(--chalk-dim);font-size:13px;margin-bottom:14px;}
-  .progress-wrap{margin-bottom:14px;}
+  .client-card .tag{display:inline-block;background:var(--red-dim);color:var(--red);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:10px;text-transform:uppercase;}
   .progress-bar-bg{background:var(--surface-2);border-radius:8px;height:8px;overflow:hidden;}
   .progress-bar-fill{background:var(--green);height:100%;}
-  .progress-label{font-size:12px;color:var(--chalk-dim);margin-top:6px;}
-  .row-btns{display:flex;gap:8px;flex-wrap:wrap;}
-  .empty{text-align:center;padding:60px 20px;color:var(--chalk-dim);}
-  .empty .icon{font-size:44px;margin-bottom:12px;}
   .section-title{display:flex;align-items:center;gap:10px;margin:34px 0 14px;}
-  .section-title .num{
-    font-family:'Space Mono',monospace;background:var(--red);color:#fff;
-    width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
-  }
-  .section-title h2{font-size:19px;margin:0;}
-  .rules-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
-  .rules-list li{background:var(--surface-2);padding:12px 14px;border-radius:10px;font-size:14px;}
+  .section-title .num{font-family:'Space Mono',monospace;background:var(--red);color:#fff;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
   .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:6px;}
   .stat-box{background:var(--surface-2);border-radius:10px;padding:14px;text-align:center;}
   .stat-box .val{font-family:'Space Mono',monospace;font-size:22px;color:var(--gold);font-weight:700;}
-  .stat-box .lbl{font-size:11.5px;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.5px;margin-top:4px;}
   .phase{border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden;}
-  .phase-head{
-    padding:16px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;
-    background:var(--surface);
-  }
-  .phase-head h3{margin:0;font-size:16px;}
-  .phase-head .sub{color:var(--chalk-dim);font-size:12.5px;font-family:'Work Sans';text-transform:none;font-weight:500;margin-top:3px;}
+  .phase-head{padding:16px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--surface);}
   .phase-body{padding:0 18px 18px;background:var(--surface);display:none;}
   .phase.open .phase-body{display:block;}
-  .phase-head .arrow{transition:.2s;font-size:14px;color:var(--chalk-dim);}
-  .phase.open .arrow{transform:rotate(180deg);}
   .ex-list{list-style:none;padding:0;margin:10px 0 16px;}
-  .ex-list li{
-    padding:10px 12px;border-bottom:1px solid var(--line);font-size:14.5px;display:flex;gap:10px;align-items:center;justify-content:space-between;
-  }
-  .ex-list li .ex-text{display:flex;gap:10px;align-items:flex-start;flex:1;}
-  .ex-list li .ex-text:before{content:"●";color:var(--red);font-size:8px;margin-top:6px;}
-  .ex-watch{
-    flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;
-    background:var(--red-dim);color:var(--red);border-radius:20px;padding:5px 12px;
-    font-size:11.5px;font-weight:700;text-decoration:none;white-space:nowrap;
-  }
-  .ex-watch:hover{background:var(--red);color:#fff;}
-  .home-tag{
-    display:inline-flex;align-items:center;gap:6px;background:var(--green);color:#fff;
-    font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:20px;margin-bottom:10px;
-    text-transform:uppercase;letter-spacing:.4px;
-  }
+  .ex-list li{padding:10px 12px;border-bottom:1px solid var(--line);font-size:14.5px;display:flex;gap:10px;align-items:center;justify-content:space-between;}
+  .ex-watch{background:var(--red-dim);color:var(--red);border-radius:20px;padding:5px 12px;font-size:11.5px;font-weight:700;text-decoration:none;}
   .punchcard{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin:14px 0;}
   @media (max-width:640px){.punchcard{grid-template-columns:repeat(5,1fr);}}
-  .punch{
-    aspect-ratio:1;border:1.5px dashed var(--line);border-radius:4px;
-    display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;
-    font-size:12px;color:var(--chalk-dim);cursor:pointer;user-select:none;transition:.12s;
-  }
+  .punch{aspect-ratio:1;border:1.5px dashed var(--line);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:12px;color:var(--chalk-dim);cursor:pointer;user-select:none;}
   .punch.done{background:var(--red);border-style:solid;border-color:var(--red);color:#fff;font-weight:700;}
   .punch.rest{border-color:var(--gold);color:var(--gold);}
-  .punch:hover{border-color:var(--red);}
-  .video-box{
-    background:var(--surface-2);border:1px solid var(--line);border-radius:12px;
-    padding:14px 16px;margin-top:16px;
-  }
-  .video-box .vlabel{font-size:12.5px;color:var(--chalk-dim);margin-bottom:10px;font-weight:600;}
-  .video-link{
-    display:inline-flex;align-items:center;gap:8px;background:var(--red-dim);color:var(--red);
-    padding:10px 16px;border-radius:8px;font-size:13.5px;font-weight:700;text-decoration:none;
-  }
-  .video-thumb{
-    position:relative;display:block;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;
-    background:var(--surface);border:1px solid var(--line);margin-bottom:10px;text-decoration:none;
-  }
-  .video-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-  .video-thumb .play-badge{
-    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    width:54px;height:54px;border-radius:50%;background:rgba(255,75,54,0.92);color:#fff;
-    display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 6px 18px rgba(0,0,0,.25);
-    transition:.15s;
-  }
-  .video-thumb:hover .play-badge{transform:translate(-50%,-50%) scale(1.08);}
-  .video-thumb.no-thumb{
-    display:flex;align-items:center;justify-content:center;background:var(--surface-2);
-    color:var(--chalk-dim);font-size:13px;
-  }
-  .code-box{
-    background:var(--surface-2);border:1.5px dashed var(--gold);border-radius:10px;
-    padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;
-  }
+  .code-box{background:var(--surface-2);border:1.5px dashed var(--gold);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;}
   .code-box .code{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--gold);letter-spacing:2px;}
-  .toast{
-    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-    background:var(--chalk);color:var(--bg);padding:12px 22px;border-radius:10px;font-weight:700;font-size:14px;
-    z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4); opacity:0; transition:opacity .25s ease;
-    pointer-events: none;
-  }
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--chalk);color:var(--bg);padding:12px 22px;border-radius:10px;font-weight:700;font-size:14px;z-index:999;opacity:0;transition:opacity .25s ease;pointer-events: none;}
   .toast.show{opacity:1;}
-  .form-section{margin-bottom:8px;}
   .phase-edit{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;background:var(--surface-2);}
-  .phase-edit .ph-title{font-weight:700;color:var(--red);font-size:13px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
-  .footer-quote{
-    text-align:center;margin-top:40px;padding:26px;border-top:1px solid var(--line);color:var(--chalk-dim);
-  }
-  .footer-quote strong{color:var(--red);}
-  .loading{text-align:center;padding:60px;color:var(--chalk-dim);}
-  .err{color:var(--red);font-size:13.5px;margin-top:10px;}
-  .help{color:var(--chalk-dim);font-size:12.5px;margin-top:6px;}
-  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  @media (max-width:560px){.two-col{grid-template-columns:1fr;}}
   .delete-x{position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--chalk-dim);cursor:pointer;font-size:18px;}
-  .delete-x:hover{color:var(--red);}
 </style>
 </head>
 <body class="stripes" style="background-attachment:fixed;">
-<div id="app"><div class="loading">Initializing...</div></div>
+<div id="app"><div class="loading">Initialising Fitness Environment...</div></div>
 <div id="toast" class="toast"></div>
 
 <script>
-/* ---------------- State & helpers ---------------- */
+/* ---------------- State & Firebase ---------------- */
 let ROUTE = {view:'landing'};
 let owner_ok = false;
 let dashUnsub = null;
 let planUnsub = null;
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBohVuvHcrFYtjg-zE44EWOordtvq7ZNqg",
+  authDomain: "pranalz-fitness-club.firebaseapp.com",
+  projectId: "pranalz-fitness-club",
+  storageBucket: "pranalz-fitness-club.firebasestorage.app",
+  messagingSenderId: "255308644168",
+  appId: "1:255308644168:web:22ac462201613f187b7d7d"
+};
+
+let db = null, FIREBASE_READY = false;
+try {
+  if(typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey){
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    FIREBASE_READY = true;
+  }
+} catch(e) { console.error('Firebase Error:', e); }
 
 function toast(msg){
   const t=document.getElementById('toast');
@@ -291,30 +229,7 @@ function genCode(){
   return s;
 }
 
-/* ============================================================
-   FIREBASE CONFIGURATION
-   ============================================================ */
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyBohVuvHcrFYtjg-zE44EWOordtvq7ZNqg",
-  authDomain: "pranalz-fitness-club.firebaseapp.com",
-  projectId: "pranalz-fitness-club",
-  storageBucket: "pranalz-fitness-club.firebasestorage.app",
-  messagingSenderId: "255308644168",
-  appId: "1:255308644168:web:22ac462201613f187b7d7d"
-};
-
-let db = null, FIREBASE_READY = false;
-try{
-  if(typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey){
-    firebase.initializeApp(FIREBASE_CONFIG);
-    db = firebase.firestore();
-    FIREBASE_READY = true;
-  }
-}catch(e){
-  console.error('Firebase Setup Error:', e);
-}
-
-/* ---------------- Firestore Database Access ---------------- */
+/* ---------------- DB Methods ---------------- */
 function membersCol(){ return db.collection('members'); }
 function settingsDoc(){ return db.collection('settings').doc('owner'); }
 
@@ -329,14 +244,11 @@ async function setOwnerPasscode(val){
   await settingsDoc().set({passcode: val});
 }
 
-// FIXED: Removed .select() which is not supported in Web SDK
 function watchMembersList(cb){
-  return membersCol()
-    .orderBy('createdAt','desc')
-    .onSnapshot(
-      snap => cb(snap.docs.map(d => ({id:d.id, ...d.data()}))),
-      err => { console.error('Dashboard sync error:', err); cb([]); }
-    );
+  return membersCol().orderBy('createdAt','desc').onSnapshot(
+    snap => cb(snap.docs.map(d => ({id:d.id, ...d.data()}))),
+    err => { console.error('Dash Error:', err); cb([]); }
+  );
 }
 
 async function getMember(code){
@@ -350,20 +262,15 @@ async function getMember(code){
 function watchMember(code, cb){
   return membersCol().doc(code).onSnapshot(
     snap => cb(snap.exists ? {id:snap.id, ...snap.data()} : null),
-    err => { console.error('Member sync error:', err); cb(null); }
+    err => { console.error('Member Error:', err); cb(null); }
   );
 }
 
 async function saveMember(id, data){
-  try {
-    await membersCol().doc(id).set(data);
-    return true;
-  } catch(e) { return false; }
+  try { await membersCol().doc(id).set(data); return true; } catch(e) { return false; }
 }
 
-async function deleteMember(id){
-  await membersCol().doc(id).delete();
-}
+async function deleteMember(id){ await membersCol().doc(id).delete(); }
 
 async function updateMemberProgress(id, doneDays){
   await membersCol().doc(id).update({doneDays});
@@ -374,70 +281,30 @@ function detachListeners(){
   if(planUnsub){ planUnsub(); planUnsub = null; }
 }
 
-/* ---------------- Utility Functions ---------------- */
+/* ---------------- Helpers ---------------- */
 function esc(str){
   const d=document.createElement('div'); d.innerText = str==null?'':str; return d.innerHTML;
 }
 
-function linesToArr(text){
-  return (text||'')
-    .replace(/<br\s*\/?>/gi, '\n')
-    .split('\n')
-    .map(s=>s.trim())
-    .filter(Boolean);
-}
-
-function expandBrLines(arr){
-  return (arr||[]).flatMap(item =>
-    String(item||'').split(/<br\s*\/?>/gi).map(s=>s.trim()).filter(Boolean)
-  );
+function isExpired(expiryDate){
+  if(!expiryDate) return false;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const exp = new Date(expiryDate); exp.setHours(23,59,59,999);
+  return today > exp;
 }
 
 function exerciseSearchTerm(line){
   if(!line) return null;
   let t = line.trim();
   if(/^\d+\s*rounds?:?$/i.test(t)) return null;
-  t = t.replace(/^finish:\s*/i,'');
-  t = t.split(/[–-]/)[0].trim();
-  t = t.replace(/^\d+\s+/,''); 
-  if(!t || t.length<3) return null;
-  return t;
+  t = t.replace(/^finish:\s*/i,'').split(/[–-]/)[0].trim().replace(/^\d+\s+/,'');
+  return t.length < 3 ? null : t;
 }
 
 const EXERCISE_VIDEO_MAP = [
-  ['jump squat', 'tZjZxrAeVjg'],
-  ['jumping jack (low impact)', 'Bqy1xIXX2nc'],
-  ['jumping jacks (low impact)', 'Bqy1xIXX2nc'],
-  ['low impact jumping jack', 'Bqy1xIXX2nc'],
-  ['jumping jack', 'F_rq04M0x5M'],
-  ['wall push-up', 'dhjjqFfUVlg'],
-  ['wall push up', 'dhjjqFfUVlg'],
-  ['incline push-up', '0JUrOH--Kdk'],
-  ['incline push up', '0JUrOH--Kdk'],
-  ['modified push-up', 'PDr5B2jLUOw'],
-  ['modified push up', 'PDr5B2jLUOw'],
-  ['knee push-up', 'PDr5B2jLUOw'],
-  ['knee push up', 'PDr5B2jLUOw'],
-  ['push-up', 'WDIpL0pjun0'],
-  ['push up', 'WDIpL0pjun0'],
-  ['bodyweight squat', 'DlS-GAF8Edg'],
-  ['squat', 'DlS-GAF8Edg'],
-  ['glute bridge', 'SKOMwg1JLrU'],
-  ['step-up', 'WCFCdxzFBa4'],
-  ['step up', 'WCFCdxzFBa4'],
-  ['standing knee raise', 'O_8EUJ7i-PI'],
-  ['knee raise', 'O_8EUJ7i-PI'],
-  ['plank', 'mwlp75MS6Rg'],
-  ['reverse lunge', 'xrPteyQLGAo'],
-  ['walking lunge', '-_270H-3Wrc'],
-  ['alternating lunge', '-_270H-3Wrc'],
-  ['lunge', '-_270H-3Wrc'],
-  ['mountain climber', 'ELCyvGG8RHA'],
-  ['bicycle crunch', 'PAEo-zRSanM'],
-  ['russian twist', 'DF0sPfwys_g'],
-  ['leg raise', 'S_AK2Qv8_q8'],
-  ['march in place', 'QilgMPG7OaA'],
-  ['marching in place', 'QilgMPG7OaA']
+  ['jump squat', 'tZjZxrAeVjg'], ['jumping jack', 'F_rq04M0x5M'], ['wall push-up', 'dhjjqFfUVlg'],
+  ['push-up', 'WDIpL0pjun0'], ['squat', 'DlS-GAF8Edg'], ['glute bridge', 'SKOMwg1JLrU'],
+  ['plank', 'mwlp75MS6Rg'], ['lunge', '-_270H-3Wrc'], ['mountain climber', 'ELCyvGG8RHA']
 ];
 
 function findExerciseVideo(term){
@@ -449,65 +316,7 @@ function findExerciseVideo(term){
   return null;
 }
 
-function extractYouTubeId(url){
-  if(!url) return null;
-  try{
-    const u = new URL(url);
-    let id = null;
-    if(u.hostname.includes('youtu.be')) id = u.pathname.slice(1);
-    else if(u.hostname.includes('youtube.com')){
-      if(u.pathname === '/watch') id = u.searchParams.get('v');
-      else if(u.pathname.startsWith('/embed/')) id = u.pathname.split('/embed/')[1];
-      else if(u.pathname.startsWith('/shorts/')) id = u.pathname.split('/shorts/')[1];
-    }
-    return id ? id.split('&')[0].split('?')[0] : null;
-  }catch(e){ return null; }
-}
-
-function defaultExpiryDate(){
-  const d = new Date(); d.setDate(d.getDate()+30);
-  return d.toISOString().slice(0,10);
-}
-
-function isExpired(expiryDate){
-  if(!expiryDate) return false;
-  const today = new Date(); 
-  today.setHours(0,0,0,0);
-  const exp = new Date(expiryDate);
-  exp.setHours(23,59,59,999);
-  return today > exp;
-}
-
-function sampleClient(){
-  return {
-    id:null,
-    name:'New Member',
-    age:25,
-    weight:'70 kg',
-    goal:'Fitness & Strength',
-    totalDays:40,
-    expiryDate: defaultExpiryDate(),
-    doneDays: [],
-    generalRules:[
-      '🚶 Walk 8,000–10,000 steps every day',
-      '💧 Drink 3–4 litres of water',
-      '😴 Get 7–8 hours of sleep',
-      '🚫 Avoid sugary drinks, junk food and fried items'
-    ],
-    phases:[
-      {title:'Days 1–10 (Beginner)', dayStart:1, dayEnd:10, video:'', exercises:['March in place – 5 min','Bodyweight Squats – 3 × 12','Wall Push-ups – 3 × 12']},
-      {title:'Days 11–20 (Intermediate)', dayStart:11, dayEnd:20, video:'', exercises:['Jumping Jacks – 3 × 30 sec','Squats – 4 × 15']},
-      {title:'Days 21–30 (Advanced)', dayStart:21, dayEnd:30, video:'', exercises:['4 Rounds:','20 Squats','15 Push-ups']},
-      {title:'Days 31–40 (Elite)', dayStart:31, dayEnd:40, video:'', exercises:['5 Rounds:','20 Jump Squats','20 Push-ups']}
-    ],
-    restDays:'7,14,21,28,35',
-    restActivities:['30-minute easy walk','Stretching'],
-    expectedResults:['Improved stamina','Better strength'],
-    createdAt: Date.now()
-  };
-}
-
-/* ---------------- Routing & Rendering ---------------- */
+/* ---------------- Navigation ---------------- */
 function go(view, params){
   detachListeners();
   ROUTE = Object.assign({view}, params||{});
@@ -517,10 +326,9 @@ function go(view, params){
 async function render(){
   const app = document.getElementById('app');
   if(!FIREBASE_READY){
-    app.innerHTML = `<div class="loading">Firebase Error: Please check your configuration in index.html</div>`;
+    app.innerHTML = `<div class="loading">Firebase Error. Check index.html Config.</div>`;
     return;
   }
-  
   if(ROUTE.view==='landing') renderLanding();
   else if(ROUTE.view==='owner-gate') renderOwnerGate();
   else if(ROUTE.view==='owner-dash') renderOwnerDash();
@@ -535,28 +343,21 @@ function renderLanding(){
       <div class="hero-inner">
         <div class="gym-name">PRANALZ <span class="hl">FITNESS CLUB</span></div>
         <h1>Your Plan. Your Progress.</h1>
-        <p>Personalized diet and home workout plans, private progress tracking, and follow-along videos.</p>
-        <div class="feature-strip">
-          <div class="feature-pill"><span class="em">🎥</span> Workout Videos</div>
-          <div class="feature-pill"><span class="em">🔒</span> Private Plans</div>
-          <div class="feature-pill"><span class="em">📈</span> Tracking</div>
-        </div>
+        <p>Personalized home workout plans and progress tracking for ultimate transformation.</p>
       </div>
     </div>
     <div class="doors">
       <div class="door" onclick="go('owner-gate')">
         <div class="icon-badge">🔑</div>
         <h3>Owner Dashboard</h3>
-        <button class="btn btn-primary btn-full">Enter Dashboard</button>
+        <button class="btn btn-primary btn-full">Login</button>
       </div>
       <div class="door" onclick="go('client-gate')">
         <div class="icon-badge">💪</div>
         <h3>Member Access</h3>
         <button class="btn btn-outline btn-full">View My Plan</button>
-        <div class="privacy-note"><span class="lock">🔒</span><span>Private Access with Your Code</span></div>
       </div>
     </div>
-    <div class="footer-quote">"Discipline + Consistency = <strong>Transformation.</strong>" 💪</div>
   `;
 }
 
@@ -564,133 +365,85 @@ async function renderOwnerGate(){
   const saved = await getOwnerPasscode();
   const firstRun = !saved;
   document.getElementById('app').innerHTML = `
-    <div class="topbar"><span class="back" onclick="go('landing')">← Back</span><span class="brand">OWNER LOGIN</span></div>
+    <div class="topbar"><span class="back" onclick="go('landing')">← Back</span></div>
     <div class="card" style="max-width:420px;margin:40px auto;">
-      <h2 style="margin-top:0;">${firstRun ? 'Set Passcode' : 'Enter Passcode'}</h2>
-      <label>Passcode</label>
+      <h2>${firstRun ? 'Set Passcode' : 'Owner Login'}</h2>
       <input id="pc" type="password" placeholder="Passcode">
       <div id="pcErr" class="err"></div>
-      <button class="btn btn-primary btn-full" style="margin-top:18px;" onclick="submitPasscode(${firstRun})">${firstRun?'Set & Continue':'Login'}</button>
+      <button class="btn btn-primary btn-full" style="margin-top:18px;" onclick="submitPasscode(${firstRun})">Continue</button>
     </div>
   `;
 }
 
 async function submitPasscode(firstRun){
   const val = document.getElementById('pc').value.trim();
-  if(!val){ document.getElementById('pcErr').textContent='Required'; return; }
-  if(firstRun){
-    await setOwnerPasscode(val);
-    owner_ok = true; go('owner-dash');
-  } else {
+  if(firstRun){ await setOwnerPasscode(val); owner_ok = true; go('owner-dash'); }
+  else {
     const saved = await getOwnerPasscode();
     if(saved === val){ owner_ok = true; go('owner-dash'); }
-    else { document.getElementById('pcErr').textContent='Incorrect Passcode'; }
+    else document.getElementById('pcErr').textContent='Incorrect Passcode';
   }
 }
 
 async function renderOwnerDash(){
-  if(!owner_ok){ return go('owner-gate'); }
-  document.getElementById('app').innerHTML = '<div class="loading">Loading Dashboard...</div>';
+  if(!owner_ok) return go('owner-gate');
   dashUnsub = watchMembersList(list => paintOwnerDash(list));
 }
 
 function paintOwnerDash(index){
-  let cardsHtml = '';
-  for(const c of index){
-    const doneDays = c.doneDays || [];
-    const pct = Math.round((doneDays.length / (c.totalDays||40))*100);
-    const expired = isExpired(c.expiryDate);
-    
-    cardsHtml += `
+  let cardsHtml = index.map(c => {
+    const pct = Math.round(((c.doneDays||[]).length / (c.totalDays||40))*100);
+    const exp = isExpired(c.expiryDate);
+    return `
       <div class="card client-card">
         <button class="delete-x" onclick="deleteClient('${c.id}')">✕</button>
-        <div class="tag">${esc((c.goal||'').split(',')[0])}</div>
+        <div class="tag">${esc(c.goal)}</div>
         <h3>${esc(c.name)}</h3>
-        <div class="meta">${esc(c.age)} Yrs · ${esc(c.weight)}</div>
-        <div style="font-size:12px; margin-bottom:10px; color:${expired?'var(--red)':'var(--chalk-dim)'}">${expired?'Expired':'Expiry'}: ${esc(c.expiryDate)}</div>
-        <div class="progress-wrap">
+        <div style="font-size:12px; color:${exp?'var(--red)':'var(--chalk-dim)'}">${exp?'EXPIRED':'Expiry'}: ${c.expiryDate}</div>
+        <div class="progress-wrap" style="margin-top:10px">
           <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-          <div class="progress-label">${doneDays.length}/${c.totalDays} days done</div>
         </div>
-        <div class="row-btns">
+        <div class="row-btns" style="margin-top:15px">
           <button class="btn btn-primary btn-sm" onclick="go('plan-view',{id:'${c.id}',asOwner:true})">View</button>
           <button class="btn btn-ghost btn-sm" onclick="go('owner-form',{id:'${c.id}'})">Edit</button>
-          <button class="btn btn-outline btn-sm" onclick="copyCode('${c.id}')">Code</button>
+          <button class="btn btn-outline btn-sm" onclick="navigator.clipboard.writeText('${c.id}').then(()=>toast('Copied'))">Code</button>
         </div>
       </div>`;
-  }
-  
-  if(!index.length) cardsHtml = '<div class="empty">No members found.</div>';
-
+  }).join('');
   document.getElementById('app').innerHTML = `
     <div class="topbar"><span class="brand">OWNER PANEL</span><span class="back" onclick="owner_ok=false;go('landing')">Logout</span></div>
     <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
-      <h2 style="margin:0;">Members (${index.length})</h2>
+      <h2>Members (${index.length})</h2>
       <button class="btn btn-primary" onclick="go('owner-form')">+ New</button>
     </div>
     <div class="grid-clients">${cardsHtml}</div>
   `;
 }
 
-async function deleteClient(id){
-  if(confirm('Delete member?')){
-    await deleteMember(id);
-    toast('Deleted');
-  }
-}
-
-async function copyCode(id){
-  navigator.clipboard.writeText(id).then(()=>toast('Code Copied: '+id));
-}
+async function deleteClient(id){ if(confirm('Delete?')) await deleteMember(id); }
 
 async function renderOwnerForm(id){
-  if(!owner_ok){ return go('owner-gate'); }
-  let data = id ? await getMember(id) : sampleClient();
+  let data = id ? await getMember(id) : {name:'', age:25, weight:'', goal:'', totalDays:40, expiryDate:'', doneDays:[], generalRules:[], phases:[{title:'', dayStart:1, dayEnd:10, exercises:[], video:''},{title:'', dayStart:11, dayEnd:20, exercises:[], video:''},{title:'', dayStart:21, dayEnd:30, exercises:[], video:''},{title:'', dayStart:31, dayEnd:40, exercises:[], video:''}], restDays:'7,14,21,28,35', restActivities:[]};
   
   const phaseHtml = data.phases.map((p,i)=>`
     <div class="phase-edit">
       <div class="ph-title">Phase ${i+1}</div>
       <input id="ph_title_${i}" value="${esc(p.title)}" placeholder="Title">
-      <div class="two-col" style="margin-top:10px">
-        <input id="ph_start_${i}" type="number" value="${p.dayStart}">
-        <input id="ph_end_${i}" type="number" value="${p.dayEnd}">
-      </div>
-      <textarea id="ph_ex_${i}" style="margin-top:10px" placeholder="Exercises (one per line)">${expandBrLines(p.exercises).join('\n')}</textarea>
-      <input id="ph_video_${i}" style="margin-top:10px" placeholder="Full Video Link" value="${esc(p.video)}">
+      <textarea id="ph_ex_${i}" style="margin-top:10px" placeholder="Exercises">${(p.exercises||[]).join('\n')}</textarea>
     </div>
   `).join('');
 
   document.getElementById('app').innerHTML = `
-    <div class="topbar"><span class="back" onclick="go('owner-dash')">← Cancel</span><span class="brand">MEMBER PLAN</span></div>
+    <div class="topbar"><span class="back" onclick="go('owner-dash')">← Cancel</span></div>
     <div class="card">
-      <div class="two-col">
-        <div><label>Name</label><input id="f_name" value="${esc(data.name)}"></div>
-        <div><label>Age</label><input id="f_age" type="number" value="${data.age}"></div>
-      </div>
-      <div class="two-col">
-        <div><label>Weight</label><input id="f_weight" value="${esc(data.weight)}"></div>
-        <div><label>Total Days</label><input id="f_totaldays" type="number" value="${data.totalDays}"></div>
-      </div>
+      <label>Name</label><input id="f_name" value="${esc(data.name)}">
+      <label>Total Days</label><input id="f_totaldays" type="number" value="${data.totalDays}">
       <label>Goal</label><input id="f_goal" value="${esc(data.goal)}">
-    </div>
-
-    <div class="section-title"><div class="num">2</div><h2>General Rules</h2></div>
-    <textarea id="f_rules" class="card" rows="5">${expandBrLines(data.generalRules).join('\n')}</textarea>
-
-    <div class="section-title"><div class="num">3</div><h2>Workout Phases</h2></div>
-    ${phaseHtml}
-
-    <div class="section-title"><div class="num">4</div><h2>Rest & Results</h2></div>
-    <div class="card">
-      <label>Rest Days (7,14...)</label><input id="f_restdays" value="${data.restDays}">
-      <label>Rest Activities</label><textarea id="f_restact">${expandBrLines(data.restActivities).join('\n')}</textarea>
       <label>Expiry Date</label><input id="f_expiry" type="date" value="${data.expiryDate}">
     </div>
-
-    <div style="margin-top:20px; display:flex; gap:10px;">
-      <button class="btn btn-primary" onclick="saveClient('${id||''}')">Save Member</button>
-      <button class="btn btn-ghost" onclick="go('owner-dash')">Cancel</button>
-    </div>
+    <div class="section-title"><h2>Workout Phases</h2></div>
+    ${phaseHtml}
+    <button class="btn btn-primary" style="margin-top:20px" onclick="saveClient('${id||''}')">Save Plan</button>
   `;
 }
 
@@ -699,44 +452,29 @@ async function saveClient(existingId){
   for(let i=0;i<4;i++){
     phases.push({
       title: document.getElementById('ph_title_'+i).value,
-      dayStart: parseInt(document.getElementById('ph_start_'+i).value),
-      dayEnd: parseInt(document.getElementById('ph_end_'+i).value),
-      exercises: linesToArr(document.getElementById('ph_ex_'+i).value),
-      video: document.getElementById('ph_video_'+i).value
+      dayStart: (i*10)+1, dayEnd: (i+1)*10,
+      exercises: document.getElementById('ph_ex_'+i).value.split('\n').filter(Boolean),
+      video: ''
     });
   }
-
   const id = existingId || genCode();
-  const old = existingId ? await getMember(existingId) : null;
-
   const data = {
-    id,
-    name: document.getElementById('f_name').value || 'New Member',
-    age: document.getElementById('f_age').value,
-    weight: document.getElementById('f_weight').value,
-    goal: document.getElementById('f_goal').value,
+    id, name: document.getElementById('f_name').value,
     totalDays: parseInt(document.getElementById('f_totaldays').value),
-    generalRules: linesToArr(document.getElementById('f_rules').value),
-    phases,
-    restDays: document.getElementById('f_restdays').value,
-    restActivities: linesToArr(document.getElementById('f_restact').value),
+    goal: document.getElementById('f_goal').value,
     expiryDate: document.getElementById('f_expiry').value,
-    expectedResults: old ? old.expectedResults : [],
-    doneDays: old ? old.doneDays : [],
-    createdAt: old ? old.createdAt : Date.now()
+    phases, createdAt: Date.now(), doneDays: [], generalRules:['Walk 10k steps', 'Drink 4L Water'], restDays: '7,14,21,28,35', restActivities: ['Stretching']
   };
-
   await saveMember(id, data);
-  toast('Saved');
   go('owner-dash');
 }
 
 function renderClientGate(){
   document.getElementById('app').innerHTML = `
-    <div class="topbar"><span class="back" onclick="go('landing')">← Back</span><span class="brand">LOGIN</span></div>
+    <div class="topbar"><span class="back" onclick="go('landing')">← Back</span></div>
     <div class="card" style="max-width:400px;margin:40px auto;text-align:center;">
-      <h2>Member Code</h2>
-      <input id="clientCode" placeholder="ABC123" style="text-align:center; text-transform:uppercase; font-size:24px;">
+      <h2>Enter Member Code</h2>
+      <input id="clientCode" placeholder="Code" style="text-align:center; text-transform:uppercase;">
       <div id="codeErr" class="err"></div>
       <button class="btn btn-primary btn-full" style="margin-top:20px;" onclick="tryClientCode()">View Plan</button>
     </div>
@@ -755,71 +493,81 @@ function renderPlanView(id, asOwner){
 }
 
 function paintPlanView(id, asOwner, data){
+  const app = document.getElementById('app');
   if(!data){ go('landing'); return; }
 
+  // STRICT EXPIRY BLOCK
   if(!asOwner && isExpired(data.expiryDate)){
-    document.getElementById('app').innerHTML = `<div class="card" style="max-width:500px;margin:100px auto;text-align:center;"><h2>Membership Expired</h2><p>Please contact gym owner.</p><button class="btn btn-primary" onclick="go('landing')">Back Home</button></div>`;
+    app.innerHTML = `
+      <div style="position:fixed; inset:0; background:var(--bg); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px;">
+        <div class="card" style="max-width:500px; text-align:center; border-color:var(--red);">
+          <div style="font-size:60px; margin-bottom:20px;">⏳</div>
+          <h1 style="color:var(--red); font-size:32px; margin-bottom:10px;">Membership Expired</h1>
+          <p style="color:var(--chalk-dim); font-size:16px; line-height:1.6; margin-bottom:25px;">
+            Your transformation plan has expired. To continue accessing your workout videos, progress tracking, and personalized dashboard, please contact the gym owner for a renewal.
+          </p>
+          <div style="background:var(--red-dim); color:var(--red); padding:15px; border-radius:10px; font-weight:700; margin-bottom:20px;">
+            RENEW MEMBERSHIP TO UNLOCK
+          </div>
+          <button class="btn btn-outline btn-full" onclick="location.reload()">Refresh Page</button>
+          <p style="margin-top:20px; font-size:12px; color:var(--chalk-dim);">Pranalz Fitness Club • Discipline + Consistency</p>
+        </div>
+      </div>
+    `;
     return;
   }
 
   const doneDays = data.doneDays || [];
-  const restDaysArr = (data.restDays||'').split(',').map(s=>parseInt(s.trim())).filter(Boolean);
-
-  const phasesHtml = data.phases.map((p,i)=>{
-    const exHtml = p.exercises.map(e=>{
-      const term = exerciseSearchTerm(e);
-      const matched = findExerciseVideo(term);
-      const url = matched ? matched.url : (term ? 'https://www.youtube.com/results?search_query='+encodeURIComponent(term+' exercise') : null);
-      return `<li><span class="ex-text">${esc(e)}</span>${url?`<a class="ex-watch" href="${url}" target="_blank">▶ Watch</a>`:''}</li>`;
+  const phasesHtml = (data.phases||[]).map((p,i)=>{
+    const exHtml = (p.exercises||[]).map(e=>{
+      const matched = findExerciseVideo(exerciseSearchTerm(e));
+      return `<li><span>${esc(e)}</span>${matched?`<a class="ex-watch" href="${matched.url}" target="_blank">▶ Watch</a>`:''}</li>`;
     }).join('');
-
     let punchHtml='';
     for(let d=p.dayStart; d<=p.dayEnd; d++){
-      const isRest = restDaysArr.includes(d), isDone = doneDays.includes(d);
-      punchHtml += `<div class="punch ${isDone?'done':''} ${isRest&&!isDone?'rest':''}" onclick="toggleDay('${id}',${d})">${isDone?'✓':(isRest?'R':d)}</div>`;
+      const isDone = doneDays.includes(d);
+      punchHtml += `<div class="punch ${isDone?'done':''}" onclick="toggleDay('${id}',${d})">${isDone?'✓':d}</div>`;
     }
-
-    return `
-      <div class="phase" id="phase_${i}">
-        <div class="phase-head" onclick="document.getElementById('phase_${i}').classList.toggle('open')">
-          <div><h3>${esc(p.title)}</h3><div class="sub">Days ${p.dayStart}-${p.dayEnd}</div></div>
-          <div class="arrow">▾</div>
-        </div>
-        <div class="phase-body">
-          <ul class="ex-list">${exHtml}</ul>
-          <div class="punchcard">${punchHtml}</div>
-        </div>
-      </div>`;
+    return `<div class="phase" id="p${i}"><div class="phase-head" onclick="this.parentElement.classList.toggle('open')"><h3>${esc(p.title)}</h3></div><div class="phase-body"><ul class="ex-list">${exHtml}</ul><div class="punchcard">${punchHtml}</div></div></div>`;
   }).join('');
 
-  document.getElementById('app').innerHTML = `
-    <div class="topbar"><span class="back" onclick="go('${asOwner?'owner-dash':'landing'}')">← Back</span><span class="brand">MY PLAN</span></div>
-    <div class="hero">
-      <h1>${esc(data.name)}</h1>
-      <p>${esc(data.goal)}</p>
-      <div class="stat-grid" style="max-width:400px;margin:20px auto;">
-        <div class="stat-box"><div class="val">${esc(data.weight)}</div><div class="lbl">Weight</div></div>
-        <div class="stat-box"><div class="val">${doneDays.length}/${data.totalDays}</div><div class="lbl">Days Done</div></div>
-      </div>
-      ${asOwner?`<div class="code-box">Member Code: <span class="code">${id}</span></div>`:''}
-    </div>
-    <div class="section-title"><div class="num">✓</div><h2>General Rules</h2></div>
-    <ul class="rules-list">${expandBrLines(data.generalRules).map(r=>`<li>${esc(r)}</li>`).join('')}</ul>
+  app.innerHTML = `
+    <div class="topbar"><span class="back" onclick="go('${asOwner?'owner-dash':'landing'}')">← Back</span></div>
+    <div class="hero"><h1>${esc(data.name)}</h1><p>${esc(data.goal)}</p></div>
+    
     <div class="section-title"><div class="num">🏋️</div><h2>Workout Plan</h2></div>
     ${phasesHtml}
+
+    <!-- Premium Expected Results Section -->
+    <div class="glass-card">
+      <h2 style="margin:0; font-size:22px; color:var(--red);">Expected Results</h2>
+      <p style="margin:5px 0 0; font-size:13px; color:var(--chalk-dim);">(With Regular Workout & Proper Diet)</p>
+      
+      <div class="result-grid">
+        <div class="result-item"><span class="dot">✦</span><span>Up to 4–7 kg Weight Loss in 40 Days*</span></div>
+        <div class="result-item"><span class="dot">✦</span><span>Improved Stamina</span></div>
+        <div class="result-item"><span class="dot">✦</span><span>Increased Strength & Flexibility</span></div>
+        <div class="result-item"><span class="dot">✦</span><span>Reduced Body Fat</span></div>
+        <div class="result-item"><span class="dot">✦</span><span>Better Energy Levels</span></div>
+        <div class="result-item"><span class="dot">✦</span><span>Improved Overall Fitness</span></div>
+      </div>
+
+      <div class="disclaimer">
+        "Results vary depending on consistency, diet, sleep, body type and medical conditions. This is not a medical guarantee."
+      </div>
+    </div>
+
+    <div class="footer-quote">"Discipline + Consistency = <strong>Transformation.</strong>"</div>
   `;
 }
 
 async function toggleDay(id, day){
-  const m = await getMember(id);
-  if(!m) return;
-  let doneDays = m.doneDays || [];
-  const idx = doneDays.indexOf(day);
-  if(idx>=0) doneDays.splice(idx,1); else doneDays.push(day);
-  await updateMemberProgress(id, doneDays);
+  const m = await getMember(id); if(!m) return;
+  let done = m.doneDays || [];
+  if(done.includes(day)) done = done.filter(x => x!==day); else done.push(day);
+  await updateMemberProgress(id, done);
 }
 
-// Initial Run
 go('landing');
 </script>
 </body>
