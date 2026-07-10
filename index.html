@@ -30,50 +30,8 @@
     font-family:'Work Sans',sans-serif;
     min-height:100vh;
   }
-
-  /* --- Premium Background Styles --- */
-  .main-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background: url('gym-bg.jpg') no-repeat center center;
-    background-size: cover;
-    filter: blur(3px); /* 3px Blur as requested */
-    transform: scale(1.1); /* Prevents white edges from blur */
-  }
-  .main-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    background: rgba(0, 0, 0, 0.7); /* 70% Dark Overlay for readability */
-  }
-  
-  /* Fade-in Animation */
-  .fade-in {
-    animation: fadeInAnimation 1.2s ease-out forwards;
-  }
-  @keyframes fadeInAnimation {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Content Wrapper to stay above BG */
-  #app {
-    position: relative;
-    z-index: 10;
-    max-width:1080px;
-    margin:0 auto;
-    padding:20px 16px 60px;
-  }
-
   .stripes{
-    background-image: repeating-linear-gradient(135deg, rgba(255,75,54,0.05) 0px, rgba(255,75,54,0.05) 12px, transparent 12px, transparent 26px);
+    background-image: repeating-linear-gradient(135deg, rgba(255,75,54,0.09) 0px, rgba(255,75,54,0.09) 12px, transparent 12px, transparent 26px);
   }
   h1,h2,h3,.display{
     font-family:'Anton',sans-serif;
@@ -83,6 +41,7 @@
     color:var(--chalk);
   }
   .mono{font-family:'Space Mono',monospace;}
+  #app{max-width:1080px;margin:0 auto;padding:20px 16px 60px;}
   .btn{
     font-family:'Work Sans',sans-serif;
     font-weight:700;
@@ -96,8 +55,8 @@
   .btn:active{transform:scale(0.97);}
   .btn-primary{background:var(--red);color:#fff;}
   .btn-primary:hover{opacity:0.92;}
-  .btn-outline{background:rgba(255,255,255,0.1);color:var(--chalk);border:2px solid var(--line);backdrop-filter: blur(5px);}
-  .btn-outline:hover{border-color:var(--red); background:rgba(255,75,54,0.1);}
+  .btn-outline{background:transparent;color:var(--chalk);border:2px solid var(--line);}
+  .btn-outline:hover{border-color:var(--red);}
   .btn-ghost{background:var(--surface-2);color:var(--chalk-dim);}
   .btn-sm{padding:8px 14px;font-size:13px;border-radius:8px;}
   .btn-full{width:100%;}
@@ -120,23 +79,27 @@
   }
   label:first-child{margin-top:0;}
   .card{
-    background:rgba(25, 27, 31, 0.85);
+    background:var(--surface);
     border:1px solid var(--line);
     border-radius:14px;
     padding:20px;
-    backdrop-filter: blur(10px);
   }
   .hero{
     position:relative;text-align:center;padding:56px 20px 40px;border-radius:22px;margin-bottom:26px;
-    background:radial-gradient(ellipse at top, rgba(27, 29, 34, 0.4) 0%, rgba(15, 16, 19, 0.2) 72%);
+    background:radial-gradient(ellipse at top, #1B1D22 0%, #0F1013 72%);
     border:1px solid var(--line);overflow:hidden;
+  }
+  .hero:before{
+    content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);
+    width:520px;height:280px;border-radius:50%;
+    background:radial-gradient(ellipse, rgba(255,75,54,0.24) 0%, rgba(255,75,54,0) 70%);
+    pointer-events:none;
   }
   .hero-inner{position:relative;z-index:1;}
   .gym-name{
     font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
     font-size:clamp(34px,7.5vw,58px);line-height:1.02;letter-spacing:1px;
     margin-bottom:14px;color:var(--chalk);
-    text-shadow: 0 4px 10px rgba(0,0,0,0.5);
   }
   .gym-name .hl{
     color:var(--red);
@@ -144,28 +107,38 @@
   }
   .hero h1{font-size:22px;letter-spacing:0.5px;color:var(--chalk-dim);font-weight:600;text-transform:none;font-family:'Work Sans',sans-serif;margin:0 0 10px;background:none;-webkit-text-fill-color:var(--chalk-dim);}
   .hero p{color:var(--chalk-dim);margin:0 auto;font-size:15.5px;max-width:480px;line-height:1.5;}
-  
+  .feature-strip{
+    display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:26px;
+  }
+  .feature-pill{
+    display:flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--line);
+    padding:8px 14px;border-radius:20px;font-size:12.5px;color:var(--chalk-dim);font-weight:600;
+  }
   .doors{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;}
   @media (max-width:640px){.doors{grid-template-columns:1fr;}}
   .door{
-    position:relative;background:rgba(25, 27, 31, 0.6);border:1.5px solid var(--line);border-radius:16px;
+    position:relative;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;
     padding:30px 22px;text-align:center;cursor:pointer;transition:.18s;overflow:hidden;
-    backdrop-filter: blur(8px);
   }
   .door:hover{border-color:var(--red);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.35);}
-  
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
   .topbar .brand{font-size:15px;letter-spacing:1px;color:var(--red);font-weight:700;}
   .back{color:var(--chalk-dim);cursor:pointer;font-size:14px;font-weight:600;}
-  /* Remaining original styles... */
   .grid-clients{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
   .client-card{position:relative;overflow:hidden;}
-  .client-card .tag{display:inline-block;background:var(--red-dim);color:var(--red);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;}
+  .client-card .tag{
+    display:inline-block;background:var(--red-dim);color:var(--red);
+    font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:10px;
+    text-transform:uppercase;letter-spacing:.5px;
+  }
   .progress-wrap{margin-bottom:14px;}
   .progress-bar-bg{background:var(--surface-2);border-radius:8px;height:8px;overflow:hidden;}
   .progress-bar-fill{background:var(--green);height:100%;}
   .section-title{display:flex;align-items:center;gap:10px;margin:34px 0 14px;}
-  .section-title .num{font-family:'Space Mono',monospace;background:var(--red);color:#fff;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+  .section-title .num{
+    font-family:'Space Mono',monospace;background:var(--red);color:#fff;
+    width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+  }
   .rules-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
   .rules-list li{background:var(--surface-2);padding:12px 14px;border-radius:10px;font-size:14px;}
   .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:6px;}
@@ -173,29 +146,46 @@
   .stat-box .val{font-family:'Space Mono',monospace;font-size:22px;color:var(--gold);font-weight:700;}
   .stat-box .lbl{font-size:11.5px;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.5px;margin-top:4px;}
   .phase{border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden;}
-  .phase-head{padding:16px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--surface);}
+  .phase-head{
+    padding:16px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;
+    background:var(--surface);
+  }
   .phase-body{padding:0 18px 18px;background:var(--surface);display:none;}
   .phase.open .phase-body{display:block;}
   .ex-list{list-style:none;padding:0;margin:10px 0 16px;}
-  .ex-list li{padding:10px 12px;border-bottom:1px solid var(--line);font-size:14.5px;display:flex;gap:10px;align-items:center;justify-content:space-between;}
-  .ex-watch{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--red-dim);color:var(--red);border-radius:20px;padding:5px 12px;font-size:11.5px;font-weight:700;text-decoration:none;white-space:nowrap;}
+  .ex-list li{
+    padding:10px 12px;border-bottom:1px solid var(--line);font-size:14.5px;display:flex;gap:10px;align-items:center;justify-content:space-between;
+  }
+  .ex-watch{
+    flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    background:var(--red-dim);color:var(--red);border-radius:20px;padding:5px 12px;
+    font-size:11.5px;font-weight:700;text-decoration:none;white-space:nowrap;
+  }
   .punchcard{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin:14px 0;}
   @media (max-width:640px){.punchcard{grid-template-columns:repeat(5,1fr);}}
-  .punch{aspect-ratio:1;border:1.5px dashed var(--line);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:12px;color:var(--chalk-dim);cursor:pointer;user-select:none;transition:.12s;}
+  .punch{
+    aspect-ratio:1;border:1.5px dashed var(--line);border-radius:4px;
+    display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;
+    font-size:12px;color:var(--chalk-dim);cursor:pointer;user-select:none;transition:.12s;
+  }
   .punch.done{background:var(--red);border-style:solid;border-color:var(--red);color:#fff;font-weight:700;}
-  .code-box{background:var(--surface-2);border:1.5px dashed var(--gold);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;}
+  .code-box{
+    background:var(--surface-2);border:1.5px dashed var(--gold);border-radius:10px;
+    padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;
+  }
   .code-box .code{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--gold);letter-spacing:2px;}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--chalk);color:var(--bg);padding:12px 22px;border-radius:10px;font-weight:700;font-size:14px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4); opacity:0; transition:opacity .25s ease;pointer-events: none;}
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--chalk);color:var(--bg);padding:12px 22px;border-radius:10px;font-weight:700;font-size:14px;
+    z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4); opacity:0; transition:opacity .25s ease;
+    pointer-events: none;
+  }
   .toast.show{opacity:1;}
   .phase-edit{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;background:var(--surface-2);}
   .delete-x{position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--chalk-dim);cursor:pointer;font-size:18px;}
 </style>
 </head>
-<body class="stripes">
-<!-- Background Layers -->
-<div class="main-bg"></div>
-<div class="main-overlay"></div>
-
+<body class="stripes" style="background-attachment:fixed;">
 <div id="app"><div class="loading">Loading Pranalz Fitness Club...</div></div>
 <div id="toast" class="toast"></div>
 
@@ -299,6 +289,8 @@ function exerciseSearchTerm(line){
   if(!line) return null;
   let t = line.trim();
   if(/^\d+\s*rounds?:?$/i.test(t)) return null;
+  // Only split on a dash that acts as a separator (surrounded by spaces), so
+  // hyphenated exercise names like "Push-ups" or "Step-ups" don't get cut in half.
   t = t.replace(/^finish:\s*/i,'').split(/\s[–—-]\s/)[0].trim().replace(/^\d+\s+/,'');
   return (t.length < 3) ? null : t;
 }
@@ -349,18 +341,16 @@ async function render(){
 
 function renderLanding(){
   document.getElementById('app').innerHTML = `
-    <div class="fade-in">
-        <div class="hero">
-          <div class="hero-inner">
-            <div class="gym-name">PRANAL'Z <span class="hl">FITNESS CLUB</span></div>
-            <h1>Your Plan. Your Progress.</h1>
-            <p>Personalised home workout plans and progress tracking.</p>
-          </div>
-        </div>
-        <div class="doors">
-          <div class="door" onclick="go('owner-gate')"><h3>Owner Dashboard</h3><button class="btn btn-primary btn-full">Login</button></div>
-          <div class="door" onclick="go('client-gate')"><h3>Member Access</h3><button class="btn btn-outline btn-full">View My Plan</button></div>
-        </div>
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="gym-name">PRANALZ <span class="hl">FITNESS CLUB</span></div>
+        <h1>Your Plan. Your Progress.</h1>
+        <p>Personalised home workout plans and progress tracking.</p>
+      </div>
+    </div>
+    <div class="doors">
+      <div class="door" onclick="go('owner-gate')"><h3>Owner Dashboard</h3><button class="btn btn-primary btn-full">Login</button></div>
+      <div class="door" onclick="go('client-gate')"><h3>Member Access</h3><button class="btn btn-outline btn-full">View My Plan</button></div>
     </div>
   `;
 }
