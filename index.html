@@ -289,13 +289,24 @@ function exerciseSearchTerm(line){
   if(!line) return null;
   let t = line.trim();
   if(/^\d+\s*rounds?:?$/i.test(t)) return null;
-  t = t.replace(/^finish:\s*/i,'').split(/[–-]/)[0].trim().replace(/^\d+\s+/,'');
+  // Only split on a dash that acts as a separator (surrounded by spaces), so
+  // hyphenated exercise names like "Push-ups" or "Step-ups" don't get cut in half.
+  t = t.replace(/^finish:\s*/i,'').split(/\s[–—-]\s/)[0].trim().replace(/^\d+\s+/,'');
   return (t.length < 3) ? null : t;
 }
 const EXERCISE_VIDEO_MAP = [
   ['jump squat', 'tZjZxrAeVjg'], ['jumping jack', 'F_rq04M0x5M'], ['wall push-up', 'dhjjqFfUVlg'],
   ['push-up', 'WDIpL0pjun0'], ['squat', 'DlS-GAF8Edg'], ['glute bridge', 'SKOMwg1JLrU'],
-  ['plank', 'mwlp75MS6Rg'], ['lunge', '-_270H-3Wrc'], ['mountain climber', 'ELCyvGG8RHA']
+  ['plank', 'mwlp75MS6Rg'], ['lunge', '-_270H-3Wrc'], ['mountain climber', 'ELCyvGG8RHA'],
+  ['burpee', 'qLBImHhCXSw'], ['high knee', 'WofWmk-4qU4'], ['crunch', 'GWIEON0VSaY'],
+  ['sit-up', 'zoL7eingzkQ'], ['sit up', 'zoL7eingzkQ'], ['russian twist', 'NrBUdmJSTXk'],
+  ['superman', 'z6PJMT2y8GQ'], ['side plank', 'N_s9em1xTqU'], ['wall sit', 'JaZNYM3zAP0'],
+  ['calf raise', 'k8ipHzKeAkQ'], ['leg raise', 'S_AK2Qv8_q8'], ['tricep dip', 'Z6clPufyDOs'],
+  ['jump rope', 'nMHfZ-yrFjA'], ['skipping', 'nMHfZ-yrFjA'], ['bicep curl', 'XE_pHwbst04'],
+  ['shoulder press', '0JfYxMRsUCQ'], ['deadlift', 'Ipi8_vz8_z0'],
+  ['march in place', 'QilgMPG7OaA'], ['marching', 'QilgMPG7OaA'],
+  ['step-up', 'aajhW7DD1EA'], ['step up', 'aajhW7DD1EA'],
+  ['knee raise', 'O_8EUJ7i-PI'], ['brisk walk', 'OMuHf1wQIug'], ['walk', 'OMuHf1wQIug']
 ];
 function findExerciseVideo(term){
   if(!term) return null;
@@ -322,6 +333,7 @@ async function render(){
   if(ROUTE.view==='landing') renderLanding();
   else if(ROUTE.view==='owner-gate') renderOwnerGate();
   else if(ROUTE.view==='owner-dash') renderOwnerDash();
+  else if(ROUTE.view==='owner-change-pw') renderChangePassword();
   else if(ROUTE.view==='owner-form') renderOwnerForm(ROUTE.id||null);
   else if(ROUTE.view==='client-gate') renderClientGate();
   else if(ROUTE.view==='plan-view') renderPlanView(ROUTE.id, ROUTE.asOwner);
@@ -385,7 +397,13 @@ function paintOwnerDash(index){
       </div>
     </div>`).join('');
   document.getElementById('app').innerHTML = `
-    <div class="topbar"><span class="brand">OWNER PANEL</span><span class="back" onclick="owner_ok=false;go('landing')">Logout</span></div>
+    <div class="topbar">
+      <span class="brand">OWNER PANEL</span>
+      <div style="display:flex;gap:16px;align-items:center;">
+        <span class="back" onclick="go('owner-change-pw')">Change Password</span>
+        <span class="back" onclick="owner_ok=false;go('landing')">Logout</span>
+      </div>
+    </div>
     <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
       <h2>Members (${index.length})</h2>
       <button class="btn btn-primary" onclick="go('owner-form')">+ New Member</button>
@@ -394,6 +412,41 @@ function paintOwnerDash(index){
   `;
 }
 async function deleteClient(id){ if(confirm('Delete?')) await deleteMember(id); }
+
+function renderChangePassword(){
+  if(!owner_ok) return go('owner-gate');
+  document.getElementById('app').innerHTML = `
+    <div class="topbar"><span class="back" onclick="go('owner-dash')">← Back</span></div>
+    <div class="card" style="max-width:420px;margin:40px auto;">
+      <h2>Change Owner Password</h2>
+      <label>Current Password</label>
+      <input id="cp_old" type="password" placeholder="Current password">
+      <label>New Password</label>
+      <input id="cp_new" type="password" placeholder="New password">
+      <label>Confirm New Password</label>
+      <input id="cp_confirm" type="password" placeholder="Re-enter new password">
+      <div id="cpErr" class="err"></div>
+      <button class="btn btn-primary btn-full" style="margin-top:18px;" onclick="submitChangePassword()">Update Password</button>
+    </div>
+  `;
+}
+
+async function submitChangePassword(){
+  const oldVal = document.getElementById('cp_old').value.trim();
+  const newVal = document.getElementById('cp_new').value.trim();
+  const confirmVal = document.getElementById('cp_confirm').value.trim();
+  const errEl = document.getElementById('cpErr');
+
+  const saved = await getOwnerPasscode();
+  if(saved !== oldVal){ errEl.textContent = 'Current password is incorrect'; return; }
+  if(!newVal){ errEl.textContent = 'New password cannot be empty'; return; }
+  if(newVal !== confirmVal){ errEl.textContent = 'New passwords do not match'; return; }
+  if(newVal === oldVal){ errEl.textContent = 'New password must be different from current password'; return; }
+
+  await db.collection('settings').doc('owner').set({passcode:newVal});
+  toast('Password updated');
+  go('owner-dash');
+}
 
 async function renderOwnerForm(id){
   let data = id ? await getMember(id) : {name:'', age:'', weight:'', goal:'', totalDays:40, expiryDate:'', phases:[{title:'', exercises:[]},{title:'', exercises:[]},{title:'', exercises:[]},{title:'', exercises:[]}]};
