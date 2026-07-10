@@ -30,47 +30,6 @@
     font-family:'Work Sans',sans-serif;
     min-height:100vh;
   }
-
-  /* --- NEW BACKGROUND & ANIMATION STYLES --- */
-  .landing-bg-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
-    background: var(--bg);
-  }
-  .landing-bg-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* REPLACE 'gym-image.jpg' WITH YOUR ACTUAL FILENAME */
-    background: url('gym-image.jpg') no-repeat center center;
-    background-size: cover;
-    filter: blur(3px);
-    transform: scale(1.1); /* Prevents white edges from blur */
-  }
-  .landing-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.72); /* 72% Opacity Dark Overlay */
-  }
-  .fade-in {
-    animation: screenFadeIn 1.2s ease-out forwards;
-  }
-  @keyframes screenFadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  /* ----------------------------------------- */
-
   .stripes{
     background-image: repeating-linear-gradient(135deg, rgba(255,75,54,0.09) 0px, rgba(255,75,54,0.09) 12px, transparent 12px, transparent 26px);
   }
@@ -82,7 +41,47 @@
     color:var(--chalk);
   }
   .mono{font-family:'Space Mono',monospace;}
-  #app{max-width:1080px;margin:0 auto;padding:20px 16px 60px; position: relative; z-index: 1;}
+  #app{max-width:1080px;margin:0 auto;padding:20px 16px 60px; position: relative; z-index: 2;}
+  
+  /* Background Styling */
+  .site-bg-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .site-bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('gym-bg.jpg') no-repeat center center;
+    background-size: cover;
+    filter: blur(4px);
+    transform: scale(1.1); /* Prevents white edges from blur */
+  }
+  .site-bg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* 70% dark overlay */
+  }
+
+  /* Fade in Animation */
+  .fade-in {
+    animation: fadeInAnimation 1.2s ease-out forwards;
+  }
+  @keyframes fadeInAnimation {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   .btn{
     font-family:'Work Sans',sans-serif;
     font-weight:700;
@@ -96,8 +95,8 @@
   .btn:active{transform:scale(0.97);}
   .btn-primary{background:var(--red);color:#fff;}
   .btn-primary:hover{opacity:0.92;}
-  .btn-outline{background:rgba(255,255,255,0.05);color:var(--chalk);border:2px solid var(--line); backdrop-filter: blur(5px);}
-  .btn-outline:hover{border-color:var(--red); background: rgba(255,75,54,0.1);}
+  .btn-outline{background:rgba(255,255,255,0.05);color:var(--chalk);border:2px solid var(--line); backdrop-filter: blur(10px);}
+  .btn-outline:hover{border-color:var(--red); background: rgba(255, 75, 54, 0.1);}
   .btn-ghost{background:var(--surface-2);color:var(--chalk-dim);}
   .btn-sm{padding:8px 14px;font-size:13px;border-radius:8px;}
   .btn-full{width:100%;}
@@ -125,11 +124,14 @@
     border-radius:14px;
     padding:20px;
   }
-  /* Adjusted hero for transparency so background shows through */
   .hero{
     position:relative;text-align:center;padding:56px 20px 40px;border-radius:22px;margin-bottom:26px;
-    background: radial-gradient(ellipse at top, rgba(27,29,34,0.4) 0%, rgba(15,16,19,0) 72%);
+    background:radial-gradient(ellipse at top, #1B1D22 0%, #0F1013 72%);
     border:1px solid var(--line);overflow:hidden;
+  }
+  /* Landing Hero adjust to show background through */
+  .hero-landing {
+    background: radial-gradient(ellipse at top, rgba(27,29,34,0.6) 0%, rgba(15,16,19,0.2) 72%);
     backdrop-filter: blur(2px);
   }
   .hero:before{
@@ -150,19 +152,21 @@
   }
   .hero h1{font-size:22px;letter-spacing:0.5px;color:var(--chalk-dim);font-weight:600;text-transform:none;font-family:'Work Sans',sans-serif;margin:0 0 10px;background:none;-webkit-text-fill-color:var(--chalk-dim);}
   .hero p{color:var(--chalk-dim);margin:0 auto;font-size:15.5px;max-width:480px;line-height:1.5;}
-  
+  .feature-strip{
+    display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:26px;
+  }
+  .feature-pill{
+    display:flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--line);
+    padding:8px 14px;border-radius:20px;font-size:12.5px;color:var(--chalk-dim);font-weight:600;
+  }
   .doors{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;}
   @media (max-width:640px){.doors{grid-template-columns:1fr;}}
   .door{
-    position:relative;
-    background:rgba(25, 27, 31, 0.6); 
-    border:1.5px solid var(--line);border-radius:16px;
+    position:relative;background:rgba(25, 27, 31, 0.85);border:1.5px solid var(--line);border-radius:16px;
     padding:30px 22px;text-align:center;cursor:pointer;transition:.18s;overflow:hidden;
     backdrop-filter: blur(10px);
   }
-  .door:hover{border-color:var(--red);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.35); background:rgba(25, 27, 31, 0.8);}
-  
-  /* Rest of styles remain unchanged... */
+  .door:hover{border-color:var(--red);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.35);}
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
   .topbar .brand{font-size:15px;letter-spacing:1px;color:var(--red);font-weight:700;}
   .back{color:var(--chalk-dim);cursor:pointer;font-size:14px;font-weight:600;}
@@ -229,6 +233,7 @@
 </style>
 </head>
 <body class="stripes" style="background-attachment:fixed;">
+
 <div id="app"><div class="loading">Loading Pranalz Fitness Club...</div></div>
 <div id="toast" class="toast"></div>
 
@@ -382,14 +387,14 @@ async function render(){
 
 function renderLanding(){
   document.getElementById('app').innerHTML = `
-    <div class="landing-bg-container">
-        <div class="landing-bg-image"></div>
-        <div class="landing-overlay"></div>
+    <div class="site-bg-wrapper">
+        <div class="site-bg-image"></div>
+        <div class="site-bg-overlay"></div>
     </div>
     <div class="fade-in">
-        <div class="hero">
+        <div class="hero hero-landing">
           <div class="hero-inner">
-            <div class="gym-name">PRANALZ <span class="hl">FITNESS CLUB</span></div>
+            <div class="gym-name">PRANAL'Z <span class="hl">FITNESS CLUB</span></div>
             <h1>Your Plan. Your Progress.</h1>
             <p>Personalised home workout plans and progress tracking.</p>
           </div>
