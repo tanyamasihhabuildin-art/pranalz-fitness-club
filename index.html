@@ -41,47 +41,7 @@
     color:var(--chalk);
   }
   .mono{font-family:'Space Mono',monospace;}
-  #app{max-width:1080px;margin:0 auto;padding:20px 16px 60px; position: relative; z-index: 2;}
-  
-  /* Background Styling */
-  .site-bg-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    overflow: hidden;
-  }
-  .site-bg-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('gym-bg.jpg') no-repeat center center;
-    background-size: cover;
-    filter: blur(4px);
-    transform: scale(1.1); /* Prevents white edges from blur */
-  }
-  .site-bg-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* 70% dark overlay */
-  }
-
-  /* Fade in Animation */
-  .fade-in {
-    animation: fadeInAnimation 1.2s ease-out forwards;
-  }
-  @keyframes fadeInAnimation {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
+  #app{max-width:1080px;margin:0 auto;padding:20px 16px 60px;}
   .btn{
     font-family:'Work Sans',sans-serif;
     font-weight:700;
@@ -95,8 +55,8 @@
   .btn:active{transform:scale(0.97);}
   .btn-primary{background:var(--red);color:#fff;}
   .btn-primary:hover{opacity:0.92;}
-  .btn-outline{background:rgba(255,255,255,0.05);color:var(--chalk);border:2px solid var(--line); backdrop-filter: blur(10px);}
-  .btn-outline:hover{border-color:var(--red); background: rgba(255, 75, 54, 0.1);}
+  .btn-outline{background:transparent;color:var(--chalk);border:2px solid var(--line);}
+  .btn-outline:hover{border-color:var(--red);}
   .btn-ghost{background:var(--surface-2);color:var(--chalk-dim);}
   .btn-sm{padding:8px 14px;font-size:13px;border-radius:8px;}
   .btn-full{width:100%;}
@@ -129,11 +89,6 @@
     background:radial-gradient(ellipse at top, #1B1D22 0%, #0F1013 72%);
     border:1px solid var(--line);overflow:hidden;
   }
-  /* Landing Hero adjust to show background through */
-  .hero-landing {
-    background: radial-gradient(ellipse at top, rgba(27,29,34,0.6) 0%, rgba(15,16,19,0.2) 72%);
-    backdrop-filter: blur(2px);
-  }
   .hero:before{
     content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);
     width:520px;height:280px;border-radius:50%;
@@ -162,9 +117,8 @@
   .doors{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;}
   @media (max-width:640px){.doors{grid-template-columns:1fr;}}
   .door{
-    position:relative;background:rgba(25, 27, 31, 0.85);border:1.5px solid var(--line);border-radius:16px;
+    position:relative;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;
     padding:30px 22px;text-align:center;cursor:pointer;transition:.18s;overflow:hidden;
-    backdrop-filter: blur(10px);
   }
   .door:hover{border-color:var(--red);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.35);}
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
@@ -229,11 +183,9 @@
   .toast.show{opacity:1;}
   .phase-edit{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;background:var(--surface-2);}
   .delete-x{position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--chalk-dim);cursor:pointer;font-size:18px;}
-  .footer-quote{text-align:center;margin-top:40px;color:var(--chalk-dim);font-style:italic;}
 </style>
 </head>
 <body class="stripes" style="background-attachment:fixed;">
-
 <div id="app"><div class="loading">Loading Pranalz Fitness Club...</div></div>
 <div id="toast" class="toast"></div>
 
@@ -337,6 +289,8 @@ function exerciseSearchTerm(line){
   if(!line) return null;
   let t = line.trim();
   if(/^\d+\s*rounds?:?$/i.test(t)) return null;
+  // Only split on a dash that acts as a separator (surrounded by spaces), so
+  // hyphenated exercise names like "Push-ups" or "Step-ups" don't get cut in half.
   t = t.replace(/^finish:\s*/i,'').split(/\s[–—-]\s/)[0].trim().replace(/^\d+\s+/,'');
   return (t.length < 3) ? null : t;
 }
@@ -387,22 +341,16 @@ async function render(){
 
 function renderLanding(){
   document.getElementById('app').innerHTML = `
-    <div class="site-bg-wrapper">
-        <div class="site-bg-image"></div>
-        <div class="site-bg-overlay"></div>
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="gym-name">PRANALZ <span class="hl">FITNESS CLUB</span></div>
+        <h1>Your Plan. Your Progress.</h1>
+        <p>Personalised home workout plans and progress tracking.</p>
+      </div>
     </div>
-    <div class="fade-in">
-        <div class="hero hero-landing">
-          <div class="hero-inner">
-            <div class="gym-name">PRANAL'Z <span class="hl">FITNESS CLUB</span></div>
-            <h1>Your Plan. Your Progress.</h1>
-            <p>Personalised home workout plans and progress tracking.</p>
-          </div>
-        </div>
-        <div class="doors">
-          <div class="door" onclick="go('owner-gate')"><h3>Owner Dashboard</h3><button class="btn btn-primary btn-full">Login</button></div>
-          <div class="door" onclick="go('client-gate')"><h3>Member Access</h3><button class="btn btn-outline btn-full">View My Plan</button></div>
-        </div>
+    <div class="doors">
+      <div class="door" onclick="go('owner-gate')"><h3>Owner Dashboard</h3><button class="btn btn-primary btn-full">Login</button></div>
+      <div class="door" onclick="go('client-gate')"><h3>Member Access</h3><button class="btn btn-outline btn-full">View My Plan</button></div>
     </div>
   `;
 }
