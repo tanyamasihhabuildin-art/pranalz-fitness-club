@@ -218,6 +218,44 @@
   .toast.show{opacity:1;}
   .phase-edit{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;background:var(--surface-2);}
   .delete-x{position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--chalk-dim);cursor:pointer;font-size:18px;}
+
+  /* ---- Diet Plan (glassmorphism) ---- */
+  .diet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:16px;}
+  .diet-card{
+    position:relative;border-radius:16px;padding:18px;overflow:hidden;
+    background:rgba(25,27,31,0.55);
+    -webkit-backdrop-filter:blur(14px) saturate(140%);
+    backdrop-filter:blur(14px) saturate(140%);
+    border:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 8px 24px rgba(0,0,0,0.28);
+  }
+  .diet-card.wide{grid-column:1 / -1;}
+  .diet-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+  .diet-card-head h4{
+    margin:0;font-family:'Anton',sans-serif;font-weight:400;letter-spacing:0.5px;text-transform:uppercase;
+    font-size:16px;color:var(--chalk);display:flex;align-items:center;gap:8px;
+  }
+  .diet-time-chip{
+    background:var(--red-dim);color:var(--red);font-size:11px;font-weight:700;
+    padding:4px 10px;border-radius:20px;white-space:nowrap;font-family:'Space Mono',monospace;
+  }
+  .diet-items{list-style:none;padding:0;margin:0;}
+  .diet-items li{
+    display:flex;justify-content:space-between;gap:10px;padding:8px 0;
+    border-bottom:1px solid rgba(255,255,255,0.07);font-size:14px;color:var(--chalk);
+  }
+  .diet-items li:last-child{border-bottom:none;}
+  .diet-items .qty{color:var(--gold);font-family:'Space Mono',monospace;font-size:12.5px;white-space:nowrap;}
+  .diet-empty{color:var(--chalk-dim);font-size:13.5px;font-style:italic;}
+  .diet-updated{
+    text-align:right;font-size:11px;color:var(--chalk-dim);margin-top:14px;font-family:'Space Mono',monospace;
+  }
+  .diet-instructions{color:var(--chalk-dim);font-size:14px;line-height:1.6;white-space:pre-wrap;margin:0;}
+  .diet-water-supp{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:520px){.diet-water-supp{grid-template-columns:1fr;}}
+  .diet-stat-val{font-family:'Space Mono',monospace;font-size:20px;color:var(--gold);font-weight:700;}
+  .diet-meal-edit{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;background:var(--surface-2);}
+  .diet-meal-edit .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 </style>
 </head>
 <body class="stripes" style="background-attachment:fixed;">
@@ -353,6 +391,72 @@ function findExerciseVideo(term){
     if(t.includes(key)) return {id, url:'https://www.youtube.com/watch?v='+id};
   }
   return null;
+}
+
+/* ---------------- Diet Plan Helpers ---------------- */
+const DIET_MEALS = [
+  {key:'breakfast', emoji:'🍳', label:'Breakfast'},
+  {key:'midMorning', emoji:'🕙', label:'Mid-Morning Snack'},
+  {key:'lunch', emoji:'🍛', label:'Lunch'},
+  {key:'eveningSnack', emoji:'☕', label:'Evening Snack'},
+  {key:'dinner', emoji:'🍽', label:'Dinner'}
+];
+function emptyDietPlan(){
+  const meals = {};
+  DIET_MEALS.forEach(m => meals[m.key] = {time:'', items:[]});
+  return {meals, water:'', supplements:'', instructions:'', updatedAt:null};
+}
+function formatDietUpdated(ts){
+  if(!ts) return '';
+  const d = new Date(ts);
+  return d.toLocaleDateString(undefined, {day:'2-digit', month:'short', year:'numeric'});
+}
+function dietMealCardHtml(m, meal){
+  const items = (meal && meal.items) || [];
+  const time = (meal && meal.time) || '';
+  const itemsHtml = items.length
+    ? `<ul class="diet-items">${items.map(i => `<li><span>${esc(i)}</span></li>`).join('')}</ul>`
+    : `<p class="diet-empty">Not set by trainer yet</p>`;
+  return `
+    <div class="diet-card">
+      <div class="diet-card-head">
+        <h4>${m.emoji} ${m.label}</h4>
+        ${time ? `<span class="diet-time-chip">🕐 ${esc(time)}</span>` : ''}
+      </div>
+      ${itemsHtml}
+    </div>`;
+}
+function renderDietPlanSection(data){
+  const plan = data.dietPlan || emptyDietPlan();
+  const meals = plan.meals || {};
+  const mealCards = DIET_MEALS.map(m => dietMealCardHtml(m, meals[m.key])).join('');
+  const water = plan.water ? esc(plan.water) : 'Not set';
+  const supplements = plan.supplements ? esc(plan.supplements) : 'None specified';
+  const instructions = plan.instructions ? esc(plan.instructions) : 'No special instructions.';
+  const updated = formatDietUpdated(plan.updatedAt);
+  return `
+    <div class="section-title"><div class="num">🥗</div><h2>My Diet Plan</h2></div>
+    <div class="diet-grid">
+      ${mealCards}
+      <div class="diet-card wide">
+        <div class="diet-water-supp">
+          <div>
+            <div class="diet-card-head"><h4>💧 Daily Water Intake</h4></div>
+            <div class="diet-stat-val">${water}</div>
+          </div>
+          <div>
+            <div class="diet-card-head"><h4>💊 Supplements</h4></div>
+            <p class="diet-instructions">${supplements}</p>
+          </div>
+        </div>
+      </div>
+      <div class="diet-card wide">
+        <div class="diet-card-head"><h4>📝 Special Instructions</h4></div>
+        <p class="diet-instructions">${instructions}</p>
+      </div>
+    </div>
+    ${updated ? `<div class="diet-updated">Last updated: ${updated}</div>` : ''}
+  `;
 }
 
 /* ---------------- Navigation ---------------- */
@@ -504,6 +608,7 @@ async function submitChangePassword(){
 
 async function renderOwnerForm(id){
   let data = id ? await getMember(id) : {name:'', age:'', weight:'', goal:'', totalDays:40, expiryDate:'', phases:[{title:'', exercises:[]},{title:'', exercises:[]},{title:'', exercises:[]},{title:'', exercises:[]}]};
+  const dietPlan = data.dietPlan || emptyDietPlan();
   document.getElementById('app').innerHTML = `
     <div class="topbar"><span class="back" onclick="go('owner-dash')">← Cancel</span></div>
     <div class="card">
@@ -522,6 +627,24 @@ async function renderOwnerForm(id){
         <input id="ph_t_${i}" value="${esc(data.phases[i]?.title||'')}" placeholder="Phase Title">
         <textarea id="ph_e_${i}" style="margin-top:10px" placeholder="Exercises">${(data.phases[i]?.exercises||[]).join('\n')}</textarea>
       </div>`).join('')}
+
+    <div class="section-title"><h2>Diet Plan Management</h2></div>
+    ${DIET_MEALS.map(m => `
+      <div class="diet-meal-edit">
+        <label>${m.emoji} ${m.label} Time</label>
+        <input id="dm_time_${m.key}" placeholder="e.g. 7:30 AM" value="${esc(dietPlan.meals[m.key]?.time||'')}">
+        <label>${m.label} Items (one per line — include quantity, e.g. "2 eggs", "100g oats")</label>
+        <textarea id="dm_items_${m.key}" placeholder="2 eggs&#10;100g oats">${(dietPlan.meals[m.key]?.items||[]).join('\n')}</textarea>
+      </div>`).join('')}
+    <div class="card" style="margin-bottom:14px;">
+      <div class="two-col">
+        <div><label>💧 Daily Water Intake</label><input id="dp_water" placeholder="e.g. 3–4 Liters" value="${esc(dietPlan.water||'')}"></div>
+        <div><label>💊 Supplements (Optional)</label><input id="dp_supplements" placeholder="e.g. Whey Protein" value="${esc(dietPlan.supplements||'')}"></div>
+      </div>
+      <label>📝 Special Instructions</label>
+      <textarea id="dp_instructions" placeholder="e.g. Avoid sugar, drink water before meals">${esc(dietPlan.instructions||'')}</textarea>
+    </div>
+
     <button class="btn btn-primary" style="margin-top:20px" onclick="saveClient('${id||''}')">Save Plan</button>
   `;
 }
@@ -533,15 +656,30 @@ async function saveClient(existingId){
     dayStart: (i*10)+1, dayEnd: (i+1)*10,
     exercises: document.getElementById('ph_e_'+i).value.split('\n').filter(Boolean)
   }));
+  const meals = {};
+  DIET_MEALS.forEach(m => {
+    meals[m.key] = {
+      time: document.getElementById('dm_time_'+m.key).value.trim(),
+      items: document.getElementById('dm_items_'+m.key).value.split('\n').map(s=>s.trim()).filter(Boolean)
+    };
+  });
+  const dietPlan = {
+    meals,
+    water: document.getElementById('dp_water').value.trim(),
+    supplements: document.getElementById('dp_supplements').value.trim(),
+    instructions: document.getElementById('dp_instructions').value.trim(),
+    updatedAt: Date.now()
+  };
   const data = {
     id, name: document.getElementById('f_name').value, age: document.getElementById('f_age').value,
     weight: document.getElementById('f_weight').value, goal: document.getElementById('f_goal').value,
     totalDays: parseInt(document.getElementById('f_total').value), expiryDate: document.getElementById('f_expiry').value,
-    phases, createdAt: Date.now(), doneDays: [], generalRules:['Walk 10k steps', 'Drink 4L water']
+    phases, dietPlan, createdAt: Date.now(), doneDays: [], generalRules:['Walk 10k steps', 'Drink 4L water']
   };
   await saveMember(id, data);
   go('owner-dash');
 }
+
 
 function renderClientGate(){
   document.getElementById('app').innerHTML = `
@@ -614,6 +752,8 @@ function paintPlanView(id, asOwner, data){
 
     <div class="section-title"><div class="num">🏋️</div><h2>Workout Plan</h2></div>
     ${phasesHtml}
+
+    ${renderDietPlanSection(data)}
 
     <div class="section-title"><div class="num">🧘</div><h2>Weekly Rest (Active Recovery)</h2></div>
     <div class="card">
